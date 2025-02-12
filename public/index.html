@@ -603,11 +603,16 @@
             I am yours in every way, in every moment, in every lifetime.
           </p>
           <h2>
-            Happy First Valentine’s Day as my wife, my love, my forever! 💖✨
+            Happy First Valentine's Day as my wife, my love, my forever! 💖✨
           </h2>
+          <audio controls autoplay>
+            <source src="final-music.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
         </div>
       </div>
     </div>
+
 
     <script>
       // Hidden Hearts Game
@@ -742,6 +747,7 @@
       // Scroll Animation
       function checkScroll() {
         const sections = document.querySelectorAll(".section");
+        const finalMusic = document.getElementById("finalMusic");
 
         sections.forEach((section) => {
           const sectionTop = section.getBoundingClientRect().top;
@@ -754,12 +760,13 @@
               document.body.classList.add("show-hearts");
             }
 
-            if (
-              section.id === "final" &&
-              !section.hasAttribute("data-hearts-created")
-            ) {
+            if (section.id === "final" && !section.hasAttribute("data-hearts-created")) {
               createFallingHearts();
               section.setAttribute("data-hearts-created", "true");
+              // Play music when final section is visible
+              finalMusic.play().catch(error => {
+                console.log("Audio playback failed:", error);
+              });
             }
           }
         });
