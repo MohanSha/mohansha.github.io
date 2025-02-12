@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="theme-color" content="#000000" />
+    <!--
+      manifest.json provides metadata used when your web app is added to the
+      homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
+    -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <title>Bavishya & Mohan's Love HQ ❤️</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(45deg, #ff6b6b, #ffd3d3);
+        font-family: "Arial", sans-serif;
+        color: #fff;
+        overflow-x: hidden;
+      }
+
+      .section {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 1s ease;
+        padding: 2rem;
+      }
+
+      .section.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .message-card {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        max-width: 800px;
+        text-align: center;
+        color: #ff4b6b;
+      }
+
+      .hidden-heart {
+        position: absolute;
+        font-size: 1.5rem;
+        cursor: pointer;
+        opacity: 0.3;
+        transition: all 0.3s ease;
+      }
+
+      .hidden-heart:hover {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+
+      .quiz-option {
+        background: #fff;
+        border: 2px solid #ff4b6b;
+        padding: 1rem;
+        margin: 0.5rem;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .quiz-option:hover {
+        background: #ff4b6b;
+        color: #fff;
+      }
+
+      .hug-button {
+        background: #ff4b6b;
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .hug-button:hover {
+        transform: scale(1.1);
+        background: #ff2d55;
+      }
+
+      .found-hearts-counter {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #ff2d55;
+        padding: 1rem;
+        border-radius: 10px;
+        z-index: 1000;
+      }
+
+      @keyframes heartBeat {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .emoji {
+        font-size: 1.5rem;
+      }
+
+      .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 1rem;
+        text-align: center;
+        color: #ff4b6b;
+        z-index: 1000;
+      }
+
+      .hidden-heart {
+        display: none; /* Initially hide the hearts */
+      }
+
+      .show-hearts .hidden-heart {
+        display: block; /* Show hearts when parent has show-hearts class */
+      }
+
+      .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        background-color: #ff4b6b;
+        clip-path: path("M10 10C5.5 10 2.5 7.5 0 0c2.5 7.5 5.5 10 10 10z");
+        animation: fall linear forwards;
+        z-index: 999;
+      }
+
+      @keyframes fall {
+        to {
+          transform: translateY(100vh) rotate(360deg);
+        }
+      }
+
+      .heart-confetti {
+        position: fixed;
+        pointer-events: none;
+        z-index: 999;
+        font-size: 1.5rem;
+        animation: confettiFall linear forwards;
+      }
+
+      @keyframes confettiFall {
+        0% {
+          transform: translateY(-10vh) rotate(0deg);
+        }
+        100% {
+          transform: translateY(100vh) rotate(360deg);
+        }
+      }
+
+      .mad-libs-input {
+        display: block;
+        width: 80%;
+        margin: 10px auto;
+        padding: 10px;
+        border: 2px solid #ff4b6b;
+        border-radius: 10px;
+        font-size: 1rem;
+        color: #ff4b6b;
+      }
+
+      .story-button,
+      .spin-button {
+        background: #ff4b6b;
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 20px 0;
+      }
+
+      .story-button:hover,
+      .spin-button:hover {
+        transform: scale(1.1);
+        background: #ff2d55;
+      }
+
+      .story-result,
+      .spin-result {
+        margin-top: 20px;
+        padding: 20px;
+        border-radius: 10px;
+        background: rgba(255, 75, 107, 0.1);
+      }
+
+      #bottle {
+        font-size: 5rem;
+        display: inline-block;
+        transition: transform 3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .bottle-container {
+        margin: 30px 0;
+        min-height: 100px;
+      }
+
+      .falling-heart {
+        position: fixed;
+        font-size: 24px;
+        user-select: none;
+        pointer-events: none;
+        animation: fallDown linear infinite;
+      }
+
+      @keyframes fallDown {
+        0% {
+          transform: translateY(-100vh) rotate(0deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(100vh) rotate(360deg);
+          opacity: 0.3;
+        }
+      }
+
+      .final-message {
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all 1s ease;
+      }
+
+      .final-message.show {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .photo-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+        padding: 1rem;
+        width: 100%;
+      }
+
+      .photo-thumb {
+        position: relative;
+        padding-bottom: 100%;
+        overflow: hidden;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+
+      .photo-thumb:hover {
+        transform: scale(1.05);
+      }
+
+      .photo-thumb img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 1001;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal.show {
+        display: flex;
+      }
+
+      .modal img {
+        max-width: 90%;
+        max-height: 90vh;
+        border-radius: 10px;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: white;
+        font-size: 2rem;
+        cursor: pointer;
+      }
+
+      .memory-section {
+        margin: 2rem 0;
+      }
+
+      .memory-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .memory-image {
+        max-width: 300px;
+        height: auto;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+      }
+
+      .memory-image:hover {
+        transform: scale(1.05);
+      }
+
+      .memory-description {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #ff4b6b;
+        max-width: 80%;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <noscript> You need to enable JavaScript to run this app. </noscript>
+    <div id="root"></div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+
+    <!-- Welcome Section -->
+    <div class="section" id="welcome">
+      <div class="message-card">
+        <h1>🎉 Welcome to Bavishya & Mohan Love Headquarters! 🎉</h1>
+        <p>💌 Long Distance? More Like Strong Distance! 💌</p>
+        <p>
+          Hey Bavishya! <br />
+          Since I can't teleport to India (yet), I made this website just for
+          you. Think of it as our virtual date night, filled with love,
+          laughter, and a few silly challenges.
+        </p>
+      </div>
+    </div>
+
+    <!-- Game 1: Hidden Hearts -->
+    <div class="section" id="game1">
+      <div class="message-card">
+        <h2>🎯 Game 1: Find the Hidden Hearts ❤️</h2>
+        <p>
+          Somewhere on this page, I've hidden 3 tiny hearts. Find them all, and
+          I'll tell you a secret about me!
+        </p>
+        <p>(Hint: One of them is near your favorite color!)</p>
+      </div>
+      <div class="found-hearts-counter">
+        Hearts found: <span id="heartsFound">0</span>/3
+      </div>
+    </div>
+
+    <!-- After Game 1 Memory -->
+    <div class="section memory-section">
+      <div class="message-card">
+        <h2>💝 A Memory After Finding Hearts</h2>
+        <div class="memory-container">
+          <img src="IMG_3777.jpg" alt="Memory 1" class="memory-image" />
+          <p class="memory-description">
+            Just like these hearts you found, my love for you is always tucked
+            away in the little moments we share. 💖
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game 2: Love Quiz -->
+    <div class="section" id="game2">
+      <div class="message-card">
+        <h2>📍 Game 2: Love Quiz 💘</h2>
+        <p>
+          If you get 3/3, I owe you a long-distance forehead kiss. If you fail,
+          you owe me one!
+        </p>
+
+        <div id="quiz-container">
+          <!-- Quiz questions will be inserted here by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- After Game 2 Memory -->
+    <div class="section memory-section">
+      <div class="message-card">
+        <h2>💝 A Memory After Quiz</h2>
+        <div class="memory-container">
+          <img src="IMG_5429.jpg" alt="Memory 2" class="memory-image" />
+          <p class="memory-description">
+            Just like this quiz, you always know the right answers about me. You
+            understand me better than anyone! 🥰
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game 3: Virtual Hug -->
+    <div class="section" id="game3">
+      <div class="message-card">
+        <h2>📍 Game 3: Click for a Virtual Hug 🤗</h2>
+        <p>
+          Click the button below, and I promise to hug my pillow thinking of you
+          (and maybe sniff it dramatically like a Bollywood hero).
+        </p>
+        <button class="hug-button" id="hugButton">Press for Hug</button>
+        <div id="hugResult"></div>
+      </div>
+    </div>
+
+    <!-- After Game 3 Memory -->
+    <div class="section memory-section">
+      <div class="message-card">
+        <h2>💝 A Memory After Virtual Hug</h2>
+        <div class="memory-container">
+          <img src="IMG_5774.jpg" alt="Memory 3" class="memory-image" />
+          <p class="memory-description">
+            Every virtual hug makes me miss your real hugs more. Can't wait to
+            turn these virtual hugs into real ones! 🤗
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game 4: Love Mad Libs -->
+    <div class="section" id="game4">
+      <div class="message-card">
+        <h2>📍 Game 4: Love Mad Libs – Create Our Love Story ❤️😂</h2>
+        <p>
+          Fill in the blanks and let's see what kind of ridiculous (or romantic)
+          love story we get!
+        </p>
+        <div class="mad-libs-form">
+          <input
+            type="text"
+            id="place"
+            placeholder="Place name"
+            class="mad-libs-input"
+          />
+          <input
+            type="text"
+            id="adj1"
+            placeholder="Adjective"
+            class="mad-libs-input"
+          />
+          <input
+            type="text"
+            id="adj2"
+            placeholder="Another adjective"
+            class="mad-libs-input"
+          />
+          <input
+            type="text"
+            id="object"
+            placeholder="Funny object"
+            class="mad-libs-input"
+          />
+          <input
+            type="text"
+            id="topic"
+            placeholder="Random topic"
+            class="mad-libs-input"
+          />
+          <input
+            type="text"
+            id="verb1"
+            placeholder="Verb"
+            class="mad-libs-input"
+          />
+          <input
+            type="text"
+            id="location"
+            placeholder="Dream location"
+            class="mad-libs-input"
+          />
+          <input
+            type="text"
+            id="verb2"
+            placeholder="Verb"
+            class="mad-libs-input"
+          />
+          <button class="story-button" onclick="generateStory()">
+            Generate My Love Story!
+          </button>
+        </div>
+        <div id="story-result" class="story-result"></div>
+      </div>
+    </div>
+
+    <!-- After Game 4 Memory -->
+    <div class="section memory-section">
+      <div class="message-card">
+        <h2>💝 A Memory After Love Story</h2>
+        <div class="memory-container">
+          <img src="IMG_6502.jpg" alt="Memory 4" class="memory-image" />
+          <p class="memory-description">
+            Our love story might be silly in Mad Libs, but our real story is the
+            most beautiful one I know! ❤️
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game 5: Spin the Bottle -->
+    <div class="section" id="game5">
+      <div class="message-card">
+        <h2>📍 Game 5: Spin the (Virtual) Bottle 🎭</h2>
+        <p>
+          Click the spin button, and let fate decide your romantic destiny for
+          the day!
+        </p>
+        <div class="bottle-container">
+          <div id="bottle">🍾</div>
+        </div>
+        <button class="spin-button" onclick="spinBottle()">
+          Spin the Bottle!
+        </button>
+        <div id="spin-result" class="spin-result"></div>
+      </div>
+    </div>
+
+    <!-- After Game 5 Memory -->
+    <div class="section memory-section">
+      <div class="message-card">
+        <h2>💝 A Memory After Bottle Spin</h2>
+        <div class="memory-container">
+          <img src="IMG_6375.jpg" alt="Memory 5" class="memory-image" />
+          <p class="memory-description">
+            Just like this bottle's random spins, life is unpredictable. But my
+            love for you is the one constant! 💫
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final Message -->
+    <div class="section" id="final">
+      <div class="message-card">
+        <div class="final-message">
+          <h2>📜 Final Words of Love:</h2>
+          <p>
+            Bavishya, I miss you every single day, but no distance can stop me
+            from loving you. You are my favorite notification, my best video
+            call partner, and the reason my phone battery dies daily. 😆 <br />
+            <br />
+            Bavishya, this is the first of many Valentine's Days we will share
+            as husband and wife, and though distance separates us today, my
+            heart is wrapped around yours, always. From the moment I sent the
+            first "Hi" message to you, my world has been filled with more love,
+            laughter, and meaning than ever before. Every heartbeat, every
+            whispered "I love you," and every stolen moment across miles reminds
+            me that no distance can ever come between what we have. One day
+            soon, there will be no screens, no waiting—just you and me, side by
+            side, waking up to love that feels like home. Until then, know that
+            I am yours in every way, in every moment, in every lifetime.
+          </p>
+          <h2>
+            Happy First Valentine’s Day as my wife, my love, my forever! 💖✨
+          </h2>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Hidden Hearts Game
+      const heartPositions = [
+        { top: "25%", left: "5%" },
+        { top: "45%", right: "8%" },
+        { top: "75%", left: "15%" },
+      ];
+
+      let foundHearts = 0;
+
+      heartPositions.forEach((pos, index) => {
+        const heart = document.createElement("div");
+        heart.innerHTML = "❤️";
+        heart.className = "hidden-heart";
+        heart.style.top = pos.top;
+        heart.style.left = pos.left;
+        heart.style.right = pos.right;
+
+        heart.addEventListener("click", () => {
+          if (!heart.classList.contains("found")) {
+            foundHearts++;
+            document.getElementById("heartsFound").textContent = foundHearts;
+            heart.classList.add("found");
+            heart.style.opacity = "1";
+            heart.style.animation = "heartBeat 1s infinite";
+
+            if (foundHearts === 3) {
+              alert(
+                "You found all hearts! Here's my secret: I practice saying your name every day to make sure I pronounce it perfectly! 💕"
+              );
+            }
+          }
+        });
+
+        document.body.appendChild(heart);
+      });
+
+      // Love Quiz
+      const quizQuestions = [
+        {
+          question: "What's my go-to midnight snack?",
+          options: [
+            "Pizza 🍕",
+            "Ice Cream 🍦",
+            "Both (because I'm unstoppable)",
+          ],
+          correct: 2,
+        },
+        {
+          question: "If I were an animal, what would I be?",
+          options: [
+            "Panda 🐼 (because I'm cuddly)",
+            "Bear 🐻 (because I'm Hairy)",
+            "Penguin 🐧 (because they mate for life ❤️)",
+          ],
+          correct: 2,
+        },
+        {
+          question: "What's my dream travel destination with you?",
+          options: [
+            "Norway ❄️ (so you freeze with me)",
+            "Paris 🗼 (so we can be extra romantic)",
+            "Anywhere as long as it's with you 😍",
+          ],
+          correct: 2,
+        },
+      ];
+
+      let score = 0;
+      const quizContainer = document.getElementById("quiz-container");
+
+      quizQuestions.forEach((q, qIndex) => {
+        const questionDiv = document.createElement("div");
+        questionDiv.innerHTML = `<h3>${q.question}</h3>`;
+
+        q.options.forEach((opt, optIndex) => {
+          const button = document.createElement("button");
+          button.className = "quiz-option";
+          button.textContent = opt;
+
+          button.addEventListener("click", () => {
+            if (optIndex === q.correct) {
+              score++;
+              button.style.background = "#4CAF50";
+              button.style.color = "white";
+            } else {
+              button.style.background = "#ff4444";
+              button.style.color = "white";
+            }
+
+            if (qIndex === quizQuestions.length - 1) {
+              setTimeout(() => {
+                alert(
+                  `You got ${score}/3! ${
+                    score === 3
+                      ? "I owe you a forehead kiss! 😘"
+                      : "You owe me a forehead kiss! 😊"
+                  }`
+                );
+              }, 500);
+            }
+          });
+
+          questionDiv.appendChild(button);
+        });
+
+        quizContainer.appendChild(questionDiv);
+      });
+
+      // Virtual Hug
+      document
+        .getElementById("hugButton")
+        .addEventListener("click", function () {
+          this.style.transform = "scale(0.95)";
+          this.textContent = "🤗 Hugging...";
+
+          setTimeout(() => {
+            const hugResult = document.getElementById("hugResult");
+            hugResult.innerHTML = `
+					<p style="margin-top: 20px">
+						*Virtual hug sent successfully* 🤗<br>
+						*Dramatic Bollywood music plays in the background*<br>
+						"Tum hi ho..." 🎵
+					</p>
+				`;
+            this.textContent = "Send Another Hug";
+            this.style.transform = "scale(1)";
+          }, 1500);
+        });
+
+      // Scroll Animation
+      function checkScroll() {
+        const sections = document.querySelectorAll(".section");
+
+        sections.forEach((section) => {
+          const sectionTop = section.getBoundingClientRect().top;
+          const windowHeight = window.innerHeight;
+
+          if (sectionTop < windowHeight * 0.75) {
+            section.classList.add("visible");
+
+            if (section.id === "game1") {
+              document.body.classList.add("show-hearts");
+            }
+
+            if (
+              section.id === "final" &&
+              !section.hasAttribute("data-hearts-created")
+            ) {
+              createFallingHearts();
+              section.setAttribute("data-hearts-created", "true");
+            }
+          }
+        });
+      }
+
+      window.addEventListener("scroll", checkScroll);
+      window.addEventListener("load", checkScroll);
+
+      function createFallingHearts() {
+        const hearts = ["❤️", "💖", "💝", "💕", "💗", "💓", "💘", "💞"];
+        const container = document.body;
+
+        function createHeart() {
+          const heart = document.createElement("div");
+          heart.className = "falling-heart";
+          heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+          heart.style.left = Math.random() * 100 + "vw";
+          heart.style.animationDuration = Math.random() * 3 + 2 + "s";
+          container.appendChild(heart);
+
+          setTimeout(() => heart.remove(), 5000);
+        }
+
+        // Create initial burst
+        for (let i = 0; i < 30; i++) {
+          setTimeout(createHeart, i * 100);
+        }
+
+        // Continue creating hearts
+        const interval = setInterval(createHeart, 300);
+
+        // Stop after 10 seconds
+        setTimeout(() => clearInterval(interval), 10000);
+
+        // Show the final message with delay
+        setTimeout(() => {
+          document.querySelector(".final-message").classList.add("show");
+        }, 500);
+      }
+
+      function generateStory() {
+        const inputs = {
+          place: document.getElementById("place").value || "[place]",
+          adj1: document.getElementById("adj1").value || "[adjective]",
+          adj2: document.getElementById("adj2").value || "[adjective]",
+          object: document.getElementById("object").value || "[object]",
+          topic: document.getElementById("topic").value || "[topic]",
+          verb1: document.getElementById("verb1").value || "[verb]",
+          location: document.getElementById("location").value || "[location]",
+          verb2: document.getElementById("verb2").value || "[verb]",
+        };
+
+        const story = `Once upon a time, in the magical land of ${inputs.place}, a very ${inputs.adj1} person named Mohan fell in love with the most ${inputs.adj2} girl, Bavishya. Every day, they would send ${inputs.object} to each other and talk about ${inputs.topic} until their phones ${inputs.verb1} from overuse. One day, they planned to meet in ${inputs.location}, where they would finally ${inputs.verb2} and live happily ever after! 💕`;
+
+        document.getElementById("story-result").innerHTML = story;
+      }
+
+      function spinBottle() {
+        const bottle = document.getElementById("bottle");
+        const result = document.getElementById("spin-result");
+        const outcomes = [
+          "❤️ I will send you the cheesiest pickup line I can think of.",
+          "😂 You get one free wish! (Within my budget of ₹0.)",
+          "💋 I will send you a voice note of me saying something super romantic in a dramatic filmy style.",
+          "🎁 Surprise! I'll mail you something special soon (or at least promise to).",
+        ];
+
+        const spins = Math.random() * 5 + 5; // Random number of spins between 5 and 10
+        bottle.style.transform = `rotate(${spins * 360}deg)`;
+
+        setTimeout(() => {
+          const randomOutcome =
+            outcomes[Math.floor(Math.random() * outcomes.length)];
+          result.innerHTML = `<p>${randomOutcome}</p>`;
+        }, 3000);
+      }
+
+      // Photo Gallery
+      const images = [
+        "IMG_3777.jpg",
+        "photo2.jpg",
+        "photo3.jpg",
+        "photo4.jpg",
+        "photo5.jpg",
+        "photo6.jpg",
+        // Add more image paths as needed
+      ];
+
+      const gallery = document.getElementById("photoGallery");
+      const modal = document.getElementById("imageModal");
+      const modalImg = document.getElementById("modalImage");
+
+      images.forEach((imgPath) => {
+        const thumbDiv = document.createElement("div");
+        thumbDiv.className = "photo-thumb";
+
+        const img = document.createElement("img");
+        img.src = imgPath;
+        img.alt = "Memory together";
+
+        thumbDiv.appendChild(img);
+        thumbDiv.onclick = () => showModal(imgPath);
+        gallery.appendChild(thumbDiv);
+      });
+
+      function showModal(imgPath) {
+        modal.classList.add("show");
+        modalImg.src = imgPath;
+      }
+
+      function closeModal() {
+        modal.classList.remove("show");
+      }
+
+      // Close modal when clicking outside the image
+      modal.onclick = function (e) {
+        if (e.target === modal) {
+          closeModal();
+        }
+      };
+    </script>
+    <div class="footer">Built with ❤️ by Mohan Sha for Bavishya</div>
+  </body>
+</html>
